@@ -1,4 +1,6 @@
 import React from 'react';
+import AppTheme from './AppTheme';
+import Layout from '../Layout';
 import Building, { IBuilding } from '../Building';
 import api from '../../services/api';
 
@@ -21,13 +23,15 @@ const App : React.FC = () => {
       .catch(err => setError('An error occured during the buildings request, please try again later!'))
       .finally(() => setLoading(false))
   }, [])
-  
+
   return (
-    <div>
-      { loading ? 'Loading...' : (
-        !!error ? error : buildings.map( b => <Building key={b.id} {...b} />)
-      )}
-    </div>
+    <AppTheme>
+      <Layout>
+        { loading ? 'Loading...' : (
+          !!error ? error : buildings.map( b => <Building key={b.id} {...b} />)
+          )}
+      </Layout>
+    </AppTheme>
   );
 }
 
