@@ -1,7 +1,7 @@
 import React from 'react';
 import AppTheme from './AppTheme';
 import Layout from '../Layout';
-import Building, { IBuilding } from '../Building';
+import { IBuilding, BuildingsList } from '../Building';
 import api from '../../services/api';
 
 interface BuildingsResponse {
@@ -28,8 +28,8 @@ const App : React.FC = () => {
     <AppTheme>
       <Layout>
         { loading ? 'Loading...' : (
-          !!error ? error : buildings.map( b => <Building key={b.id} {...b} />)
-          )}
+          !!error ? error : <BuildingsList buildings={buildings} />
+        )}
       </Layout>
     </AppTheme>
   );

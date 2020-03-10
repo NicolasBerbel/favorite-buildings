@@ -20,7 +20,7 @@ export const Header : React.FC = props => {
     <AppBar color="primary" elevation={2}>
       <Toolbar className={classes.toolbar}>
         <Container>
-          <Typography color="inherit" variant="h5">Órulo</Typography>
+          <Typography color="inherit" variant="h5">Buildings</Typography>
         </Container>
       </Toolbar>
     </AppBar>

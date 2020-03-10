@@ -13,7 +13,8 @@ export const buildings = functions.https.onRequest(async (req, res) => {
   try {
     const { data } = await api.get('/buildings', {
       params: {
-        page: req.query.page
+        page: req.query.page,
+        results_per_page: 12
       }
     });
 
