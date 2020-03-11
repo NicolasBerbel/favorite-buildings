@@ -81,7 +81,7 @@ export const Building : React.FC<IBuilding> = props => {
     min_parking,
     max_parking,
     min_price,
-    orulo_url,
+    // orulo_url,
     default_image,
   } = props;
 

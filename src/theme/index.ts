@@ -25,6 +25,13 @@ const theme = createMuiTheme({
 });
 theme.overrides = theme.overrides || {};
 
+//@ts-ignore
+theme.overrides.MuiPaginationItem = {
+  root: {
+    color: 'inherit'
+  }
+}
+
 theme.overrides.MuiToolbar = {
   gutters: {
     paddingLeft: theme.spacing(3),
