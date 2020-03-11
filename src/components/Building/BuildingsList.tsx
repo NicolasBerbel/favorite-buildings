@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Building from './Building';
 import Grid from '@material-ui/core/Grid';
 import { buildingsStore } from '../../contexts/BuildingsContext';
-import api, {IBuildingsResponse} from '../../services/api';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -12,20 +11,10 @@ const useStyles = makeStyles(() => ({
 
 export const BuildingsList : React.FC = () => {
   const classes = useStyles();
-  const {state, dispatch} = React.useContext(buildingsStore);
+  const {state} = React.useContext(buildingsStore);
   const { pageNumber, pages, loading } = state;
   const page = pages[pageNumber]
   const buildings = page?.buildings || [];
-
-  React.useEffect(() => {
-    dispatch({type: 'request'});
-
-    api.get<IBuildingsResponse>('/buildings')
-      .then(
-        res => dispatch({type: 'success', response: res.data}),
-        () => dispatch({type: 'failure', error: 'An error occured during the buildings request, please try again later!'})
-      );
-  }, [dispatch])
 
   return (
     <>
