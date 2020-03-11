@@ -67,5 +67,9 @@ export const BuildingsProvider : React.FC = ({children}) => {
       };
     }, initialState);
 
+  React.useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(state.favorites))
+  }, [state.favorites])
+  
   return <Provider value={{ state, dispatch }}>{children}</Provider>;
 }

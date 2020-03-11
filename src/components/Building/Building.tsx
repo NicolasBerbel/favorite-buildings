@@ -1,4 +1,5 @@
 import React from 'react';
+import equalOrRange from './equalOrRange';
 import { IBuilding } from './types';
 import { Theme } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/styles';
@@ -9,10 +10,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Badge from '@material-ui/core/Badge';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
 import LocationOn from '@material-ui/icons/LocationOn';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import BathroomIcon from '@material-ui/icons/Bathtub';
 import SuiteIcon from '@material-ui/icons/KingBed';
 import BedroomIcon from '@material-ui/icons/Hotel';
@@ -20,8 +18,8 @@ import ParkingIcon from '@material-ui/icons/DirectionsCar';
 import AreaIcon from '@material-ui/icons/Fullscreen';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import { buildingsStore } from '../../contexts/BuildingsContext';
-
-const equalOrRange = (a: number, b: number) => a === b ? `${a}` : `${a}~${b}`;
+import BuildingDetails from './BuildingDetails';
+import FavoriteButton from './FavoriteButton';
 
 const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
   root: {
@@ -31,7 +29,6 @@ const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
     backgroundColor: 'transparent',
     transition: 'transform .15s ease',
     transform: ({isFavorite}) => isFavorite ? 'scale(1.02)' : 'scale(1)',
-
   },
   media: {
     width: '100%',
@@ -41,11 +38,11 @@ const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
     backgroundPosition: 'center',
     transition: 'background-size .15s ease',
     backgroundSize: ({isFavorite}) => isFavorite ? '120%' : '100%',
+    cursor: 'pointer'
   },
   title: {
     marginBottom: 0,
-  },
-  areaValue: {
+    cursor: 'pointer'
   },
   priceValue: {
     fontWeight: 'bold',
@@ -60,7 +57,6 @@ const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
     boxShadow: ({isFavorite}) => isFavorite ? `0 -2px 0 ${theme.palette.secondary.main}, ${theme.shadows[5]}` : theme.shadows[2],
   },
   favorite: {
-    color: ({isFavorite}) => isFavorite ? theme.palette.secondary.main : 'white',
     position: 'absolute',
     top: 12,
     right: 12,
@@ -73,12 +69,12 @@ const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
 }));
 
 export const Building : React.FC<IBuilding> = props => {
-  const {state, dispatch} = React.useContext(buildingsStore);
+  const {state} = React.useContext(buildingsStore);
+  const [detailsOpen, setDetailsOpen] = React.useState(false);
   const {
     id,
     name,
     address,
-    description,
     min_area,
     max_area,
     min_bathrooms,
@@ -90,49 +86,39 @@ export const Building : React.FC<IBuilding> = props => {
     min_parking,
     max_parking,
     min_price,
-    // orulo_url,
     default_image,
   } = props;
 
   const isFavorite = state.favorites.includes(id);
-  const FavIcon = isFavorite ? FavoriteIcon : FavoriteBorderIcon;
-
-  const styles = useStyles( {isFavorite} );
-
-  React.useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(state.favorites))
-  }, [state.favorites])
+  const classes = useStyles( {isFavorite} );
 
   return (
-    <Card elevation={0} className={styles.root}>
-      <Tooltip title="Favorite">
-        <IconButton className={styles.favorite} onClick={() => dispatch({type: 'favorite', id})}>
-          <FavIcon color="inherit"/>
-        </IconButton>
-      </Tooltip>
+    <>
+    <Card elevation={0} className={classes.root}>
+      <div className={classes.favorite}>
+        <FavoriteButton id={props.id} />
+      </div>
       <CardMedia
-        className={styles.media}
+        className={classes.media}
         image={default_image["520x280"]}
+        onClick={() => setDetailsOpen(true)}
       />
-      <CardContent className={styles.content}>
-        <Typography variant='h6' className={styles.title}>{name}</Typography>
+      <CardContent className={classes.content}>
+        <Typography variant='h6' className={classes.title} onClick={() => setDetailsOpen(true)}>{name}</Typography>
         <Box color={'grey.500'} display={'flex'} alignItems={'start'} mb={1}>
-          <LocationOn className={styles.locationIcon} />
+          <LocationOn className={classes.locationIcon} />
           <span>{address.area} - {address.city}</span>
         </Box>
         <Box color={'grey.500'} display={'flex'} alignItems={'center'} mb={1}>
-          <AreaIcon className={styles.locationIcon} />
-          <span className={styles.areaValue}>
-            {equalOrRange(min_area, max_area)}m²
-          </span>
+          <AreaIcon className={classes.locationIcon} />
+          <span>{equalOrRange(min_area, max_area)}m²</span>
         </Box>
         <Box color={'grey.500'} display={'flex'} alignItems={'start'} mb={1}>
-          <LocalOfferIcon className={styles.locationIcon} />
-          <Typography variant={'body2'} className={styles.priceValue}>
+          <LocalOfferIcon className={classes.locationIcon} />
+          <Typography variant={'body2'} className={classes.priceValue}>
             {min_price.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
           </Typography>
         </Box>
-        <Typography color={'textSecondary'} variant={'body2'}>{description}</Typography>
         <Box
           mt={4}
           display={'flex'}
@@ -162,6 +148,8 @@ export const Building : React.FC<IBuilding> = props => {
         </Box>
       </CardContent>
     </Card>
+    <BuildingDetails {...props} open={detailsOpen} onClose={() => setDetailsOpen(false)} />
+    </>
   );
 };
 
