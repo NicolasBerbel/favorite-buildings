@@ -38,9 +38,9 @@ theme.overrides.MuiToolbar = {
     paddingRight: theme.spacing(3),
   },
   regular: {
-    minHeight: 40,
+    minHeight: 90,
     [theme.breakpoints.up('sm')]: {
-      minHeight: 40,
+      minHeight: 60,
     },
     [theme.breakpoints.up('md')]: {
       minHeight: 60,

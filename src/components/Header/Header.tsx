@@ -6,16 +6,24 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '../Pagination';
 import Box from '@material-ui/core/Box';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { buildingsStore } from '../../contexts/BuildingsContext';
+import Fade from '@material-ui/core/Fade';
 
 const useStyles = makeStyles( theme => ({
   toolbar: {
     paddingRight: 0,
     paddingLeft: 0,
     color: theme.palette.common.white
+  },
+  progress: {
+    marginBottom: -4,
   }
 }));
 
 export const Header : React.FC = props => {
+  const {state} = React.useContext(buildingsStore);
+  const { loading } = state;
   const classes = useStyles();
 
   return (
@@ -30,6 +38,9 @@ export const Header : React.FC = props => {
           </Box>
         </Container>
       </Toolbar>
+      <Fade in={loading}>
+        <LinearProgress className={classes.progress} color='secondary'/>
+      </Fade>
     </AppBar>
   )
 }

@@ -11,29 +11,36 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import LocationOn from '@material-ui/icons/LocationOn';
-// import Favorite from '@material-ui/icons/Favorite';
-import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import BathroomIcon from '@material-ui/icons/Bathtub';
 import SuiteIcon from '@material-ui/icons/KingBed';
 import BedroomIcon from '@material-ui/icons/Hotel';
 import ParkingIcon from '@material-ui/icons/DirectionsCar';
 import AreaIcon from '@material-ui/icons/Fullscreen';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import { buildingsStore } from '../../contexts/BuildingsContext';
 
 const equalOrRange = (a: number, b: number) => a === b ? `${a}` : `${a}~${b}`;
 
-const useStyles = makeStyles<Theme>((theme) => ({
+const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
   root: {
     position: 'relative',
     overflow: 'initial',
     maxWidth: '100%',
     backgroundColor: 'transparent',
+    transition: 'transform .15s ease',
+    transform: ({isFavorite}) => isFavorite ? 'scale(1.02)' : 'scale(1)',
+
   },
   media: {
     width: '100%',
     height: 0,
     paddingBottom: '56.25%',
-    backgroundColor: 'rgba(0, 0, 0, 0.08)'
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+    backgroundPosition: 'center',
+    transition: 'background-size .15s ease',
+    backgroundSize: ({isFavorite}) => isFavorite ? '120%' : '100%',
   },
   title: {
     marginBottom: 0,
@@ -49,10 +56,11 @@ const useStyles = makeStyles<Theme>((theme) => ({
     margin: '-24% 16px 0',
     backgroundColor: '#fff',
     borderRadius: 4,
-    boxShadow: theme.shadows[2],
+    transition: `box-shadow .2s ease-in`,
+    boxShadow: ({isFavorite}) => isFavorite ? `0 -2px 0 ${theme.palette.secondary.main}, ${theme.shadows[5]}` : theme.shadows[2],
   },
   favorite: {
-    color: 'white',
+    color: ({isFavorite}) => isFavorite ? theme.palette.secondary.main : 'white',
     position: 'absolute',
     top: 12,
     right: 12,
@@ -65,8 +73,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
 }));
 
 export const Building : React.FC<IBuilding> = props => {
-  const styles = useStyles();
+  const {state, dispatch} = React.useContext(buildingsStore);
   const {
+    id,
     name,
     address,
     description,
@@ -85,11 +94,20 @@ export const Building : React.FC<IBuilding> = props => {
     default_image,
   } = props;
 
+  const isFavorite = state.favorites.includes(id);
+  const FavIcon = isFavorite ? FavoriteIcon : FavoriteBorderIcon;
+
+  const styles = useStyles( {isFavorite} );
+
+  React.useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(state.favorites))
+  }, [state.favorites])
+
   return (
     <Card elevation={0} className={styles.root}>
       <Tooltip title="Favorite">
-        <IconButton className={styles.favorite}>
-          <FavoriteBorder color="inherit"/>
+        <IconButton className={styles.favorite} onClick={() => dispatch({type: 'favorite', id})}>
+          <FavIcon color="inherit"/>
         </IconButton>
       </Tooltip>
       <CardMedia

@@ -6,7 +6,7 @@ import MuiPagination from '@material-ui/lab/Pagination';
 export const Pagination : React.FC = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const {state, dispatch} = React.useContext(buildingsStore);
-  const { pageNumber, pages } = state;
+  const { pageNumber, pages, loading } = state;
   const page = pages[pageNumber]
 
   React.useEffect(() => {
@@ -22,7 +22,7 @@ export const Pagination : React.FC = () => {
   const handleChange = (e : React.SyntheticEvent, v : number) => setCurrentPage(v);
 
   return (!page ? null :
-    <MuiPagination size="small" color="standard" count={page?.total_pages} page={currentPage} onChange={handleChange} />
+    <MuiPagination disabled={loading} size="small" count={page?.total_pages} page={currentPage} onChange={handleChange} />
   )
 }
 
