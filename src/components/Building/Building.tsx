@@ -29,6 +29,9 @@ const useStyles = makeStyles<Theme, {isFavorite: boolean}>((theme) => ({
     backgroundColor: 'transparent',
     transition: 'transform .15s ease',
     transform: ({isFavorite}) => isFavorite ? 'scale(1.02)' : 'scale(1)',
+    '&:hover': {
+      transform: 'scale(1.05)',
+    }
   },
   media: {
     width: '100%',
